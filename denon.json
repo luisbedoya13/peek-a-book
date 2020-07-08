@@ -1,0 +1,19 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "start:dev": {
+      "cmd": "deno run src/app.ts",
+      "desc": "Run server in dev mode",
+      "allow": [
+        "net",
+        "env"
+      ],
+      "env": {
+        "PORT": "8082",
+        "HOST": "localhost"
+      },
+      "watch": true
+    }
+  }
+}
+
