@@ -1,23 +1,30 @@
 import { Application } from 'https://deno.land/x/oak/mod.ts';
+import { ApplicationPipe } from './configuration/application-pipe.ts';
 import { config } from './utils/config.ts';
+// Configuration steps
+import { HandleUncaughtErrors } from './configuration/handle-uncaught-errors.ts';
+import { HandleListening } from './configuration/handle-listening.ts';
+import { ConfigureRouters } from './configuration/configure-routers.ts';
+import { InitDatabase } from './configuration/init-database.ts';
+import { ConfigureMiddlewares } from './configuration/configure-middlewares.ts';
+// Single middlewares
 import { errorsMiddleware } from './middlewares/errors-middleware.ts';
-import { initializationPipe } from './configuration/initialization-pipe.ts';
-import { handleUncaughtErrors } from './configuration/handle-uncaught-errors.ts';
-import { handleListening } from './configuration/handle-listening.ts';
-import { configureRouters } from './configuration/configure-routers.ts';
-import { initDatabase } from './configuration/init-database.ts';
+import { staticFilesMiddleware } from './middlewares/static-files-middleware.ts';
+import { serverSecurityMiddleware } from './middlewares/server-security-middleware.ts';
+// Models
+import { Author } from './models/author.ts';
+import { Book } from './models/book.ts';
+// Routers
+import infoRouter from './routers/info-router.ts';
 
-// Init server
 const application = new Application();
 
-initializationPipe(application, [
-  initDatabase, // Init DB and configure models
-  configureRouters, // Adding routers
-  handleUncaughtErrors, // handling uncaught errors
-  handleListening, // Output for dev purposes
+ApplicationPipe(application, [
+  new InitDatabase([Author, Book]),
+  new ConfigureMiddlewares([errorsMiddleware, staticFilesMiddleware, serverSecurityMiddleware]),
+  new ConfigureRouters([infoRouter]),
+  new HandleUncaughtErrors(),
+  new HandleListening(),
 ]);
-
-// errors middleware
-application.use(errorsMiddleware);
 
 await application.listen({ ...config.server });

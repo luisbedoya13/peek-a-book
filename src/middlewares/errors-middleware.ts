@@ -5,6 +5,7 @@ export const errorsMiddleware: Middleware = async (context, next) => {
   try {
     await next();
   } catch (e) {
+    console.error(e);
     if (isHttpError(e)) {
       switch (e.status) {
         case Status.NotFound:
