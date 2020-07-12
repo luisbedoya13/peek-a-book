@@ -1,4 +1,7 @@
 export const config = {
-  hostname: Deno.env.get('HOST'),
-  port: Number(Deno.env.get('PORT')),
+  server: {
+    hostname: Deno.env.get('HOST'),
+    port: Number(Deno.env.get('PORT')),
+  },
+  database: String(Deno.env.get('DB_PATH')),
 };

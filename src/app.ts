@@ -1,13 +1,23 @@
-import { Drash } from 'https://deno.land/x/drash@v1.0.7/mod.ts';
+import { Application } from 'https://deno.land/x/oak/mod.ts';
 import { config } from './utils/config.ts';
-import { HomeResource } from './resources/home-resource.ts';
-import { BookResource } from './resources/book-resource.ts';
+import { errorsMiddleware } from './middlewares/errors-middleware.ts';
+import { initializationPipe } from './configuration/initialization-pipe.ts';
+import { handleUncaughtErrors } from './configuration/handle-uncaught-errors.ts';
+import { handleListening } from './configuration/handle-listening.ts';
+import { configureRouters } from './configuration/configure-routers.ts';
+import { initDatabase } from './configuration/init-database.ts';
 
-const server = new Drash.Http.Server({
-  response_output: 'text/json',
-  resources: [HomeResource, BookResource],
-});
+// Init server
+const application = new Application();
 
-server.run({ ...config });
+initializationPipe(application, [
+  initDatabase, // Init DB and configure models
+  configureRouters, // Adding routers
+  handleUncaughtErrors, // handling uncaught errors
+  handleListening, // Output for dev purposes
+]);
 
-console.log(`Peek-a-book server running at http://${config.hostname}:${config.port}`);
+// errors middleware
+application.use(errorsMiddleware);
+
+await application.listen({ ...config.server });

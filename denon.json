@@ -6,11 +6,14 @@
       "desc": "Run server in dev mode",
       "allow": [
         "net",
-        "env"
+        "env",
+        "read",
+        "write"
       ],
       "env": {
         "PORT": "8082",
-        "HOST": "localhost"
+        "HOST": "localhost",
+        "DB_PATH": "./database.sqlite"
       },
       "watch": true
     }

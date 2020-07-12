@@ -159,4 +159,4 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos
 
 # Custom
-**/*/database.db
+database.sqlite
